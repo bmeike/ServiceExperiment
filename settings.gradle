@@ -1,0 +1,1 @@
+include 'app0', ':app1', ':app2', ':svc', ':lib'

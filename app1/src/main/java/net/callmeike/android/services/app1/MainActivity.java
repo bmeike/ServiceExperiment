@@ -18,9 +18,7 @@ package net.callmeike.android.services.app1;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -32,24 +30,15 @@ import net.callmeike.android.services.common.Contract;
 import net.callmeike.android.services.common.SlowRandom;
 
 
-public class MainActivity extends AppCompatActivity implements ServiceConnection {
+public class MainActivity extends AppCompatActivity
+        implements Connection.ConnectionListener {
     private static final String TAG = "APP1";
 
     private Button button;
     private TextView number;
     private SlowRandom randomNumberGenerator;
 
-    @Override
-    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-        button.setEnabled(true);
-        randomNumberGenerator = SlowRandom.Stub.asInterface(iBinder);
-    }
-
-    @Override
-    public void onServiceDisconnected(ComponentName componentName) {
-        randomNumberGenerator = null;
-        button.setEnabled(false);
-    }
+    private Connection connection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,22 +56,26 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
             }
         });
     }
+    public void onConnection(SlowRandom rand) {
+        Log.d(TAG, "connected: " + rand);
+        randomNumberGenerator = rand;
+        button.setEnabled(rand != null);
+    }
 
     @Override
     protected void onStop() {
         super.onStop();
-        unbindService(this);
-        onServiceDisconnected(null);
+        connection.disconnect(this);
+        connection = null;
+        onConnection(null);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        Intent svc = new Intent();
-        svc.setComponent(
-                new ComponentName(Contract.SLOW_SERVICE_PACKAGE, Contract.SLOW_SERVICE_CLASS));
-        bindService(svc, this, Context.BIND_AUTO_CREATE);
+        connection = new Connection(this);
+        connection.connect(this);
     }
 
     void getRandomNumber() {

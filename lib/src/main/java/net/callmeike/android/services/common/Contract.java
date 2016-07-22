@@ -32,6 +32,14 @@ public class Contract {
     public static final String SLOW_SERVICE_CLASS
             = "net.callmeike.android.services.svc.SlowService";
 
+    // Relay service
+    public static final String RELAY_SERVICE_PACKAGE
+        = "net.callmeike.android.services.app2";
+    public static final String RELAY_SERVICE_CLASS
+        = "net.callmeike.android.services.app2.RelayService";
+
+    public static final int REQUEST_CONNECTION = 8954;
+
     // Cookie service
     public static final int WHAT_GOBBLED = -8954;
 

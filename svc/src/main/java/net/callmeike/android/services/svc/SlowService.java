@@ -23,6 +23,7 @@ import android.util.Log;
 import java.util.Random;
 
 import net.callmeike.android.services.common.SlowRandom;
+import net.callmeike.android.util.ProcessStats;
 
 
 public class SlowService extends Service {
@@ -55,10 +56,15 @@ public class SlowService extends Service {
 
     private static SlowServiceImpl service;
 
+    private ProcessStats statsLogger;
+
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        statsLogger = new ProcessStats();
+        statsLogger.startPeriodicLogger(getMainLooper(), 2, TAG, "PROCESS");
 
         if (null == service) {
             service = new SlowServiceImpl();
@@ -69,5 +75,11 @@ public class SlowService extends Service {
     public IBinder onBind(Intent intent) {
         Log.d(TAG, "bound!");
         return service;
+    }
+
+    @Override
+    public void onDestroy() {
+        statsLogger.stopPeriodicLogger();
+        super.onDestroy();
     }
 }

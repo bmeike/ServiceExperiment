@@ -25,6 +25,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,6 +34,8 @@ import android.widget.TextView;
 import java.lang.ref.WeakReference;
 
 import net.callmeike.android.services.common.Contract;
+import net.callmeike.android.services.common.LocalService1;
+import net.callmeike.android.services.common.LocalService2;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -73,7 +76,9 @@ public class MainActivity extends AppCompatActivity {
     private ServiceConnection con1 = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
-            svc1 = (((LocalService1.ServiceHolder) binder).getService());
+            Log.d(TAG, "local classloader #1: " + LocalService1.ServiceHolder.class.getClassLoader());
+            Log.d(TAG, "remote classloader #1: " + binder.getClass().getClassLoader());
+            // svc1 = (((LocalService1.ServiceHolder) binder).getService());
             button1.setEnabled(true);
         }
         @Override
@@ -86,7 +91,9 @@ public class MainActivity extends AppCompatActivity {
     private ServiceConnection con2 = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
-            svc2 = (((LocalService2.ServiceHolder) binder).getService());
+            Log.d(TAG, "local classloader #2: " + LocalService2.ServiceHolder.class.getClassLoader());
+            Log.d(TAG, "remote classloader #2: " + binder.getClass().getClassLoader());
+            //svc2 = (((LocalService2.ServiceHolder) binder).getService());
             button2.setEnabled(true);
         }
         @Override
@@ -157,9 +164,15 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
 
         Intent i = new Intent(this, LocalService1.class);
+        i.setComponent(new ComponentName(
+            "net.callmeike.android.services.svc",
+            "net.callmeike.android.services.common.LocalService1"));
         bindService(i, con1, Context.BIND_AUTO_CREATE);
 
-        i = new Intent(this, LocalService2.class);
+        i = new Intent();
+        i.setComponent(new ComponentName(
+            "net.callmeike.android.services.svc",
+            "net.callmeike.android.services.common.LocalService2"));
         bindService(i, con2, Context.BIND_AUTO_CREATE);
     }
 

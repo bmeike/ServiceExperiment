@@ -13,23 +13,24 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package net.callmeike.android.services.app0;
+package net.callmeike.android.services.common;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 
 /**
  * @author <a href="mailto:blake.meike@gmail.com">G. Blake Meike</a>
  * @version $Revision: $
  */
-public class LocalService2 extends Service {
+public class LocalService1 extends Service {
     public class ServiceHolder extends Binder {
-        public LocalService2 getService() {
-            return LocalService2.this;
+        public LocalService1 getService() {
+            return LocalService1.this;
         }
     }
 
@@ -37,8 +38,8 @@ public class LocalService2 extends Service {
 
     @Override
     public void onCreate() {
-        serviceHolder = new ServiceHolder();
         super.onCreate();
+        serviceHolder = new ServiceHolder();
     }
 
     @Nullable
@@ -48,6 +49,6 @@ public class LocalService2 extends Service {
     }
 
     public String prefix(String msg) {
-        return "TWO: " + msg;
+        return "ONE: " + msg;
     }
 }

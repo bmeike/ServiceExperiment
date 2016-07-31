@@ -38,91 +38,20 @@ import net.callmeike.android.services.common.Contract;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "APP0";
 
-    private Button button1;
-    private Button button2;
     private Button button3;
     private Button button4;
     private EditText input;
-    private TextView output;
     private TextView output3;
     private TextView output4;
-    private LocalService1 svc1;
-    private LocalService2 svc2;
-    private Messenger responseMessenger;
-
-    private class ResponseHandler extends Handler {
-        private final WeakReference<MainActivity> activity;
-        public ResponseHandler(MainActivity activity) {
-            this.activity = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case Contract.WHAT_GOBBLED:
-                    MainActivity act = activity.get();
-                    if (act != null) {
-                        Bundle resp = (Bundle) msg.obj;
-                        act.cookieEatenNoisily(resp.getString(Contract.PARAM_RESP));
-                    }
-                    break;
-            }
-        }
-    }
-
-    private ServiceConnection con1 = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder binder) {
-            svc1 = (((LocalService1.ServiceHolder) binder).getService());
-            button1.setEnabled(true);
-        }
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            svc1 = null;
-            button1.setEnabled(false);
-        }
-    };
-
-    private ServiceConnection con2 = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder binder) {
-            svc2 = (((LocalService2.ServiceHolder) binder).getService());
-            button2.setEnabled(true);
-        }
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            svc2 = null;
-            button2.setEnabled(false);
-        }
-    };
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        responseMessenger = new Messenger(new ResponseHandler(this));
-
         setContentView(R.layout.activity_main);
 
         input = (EditText) findViewById(R.id.input);
-        output = (TextView) findViewById(R.id.output);
-
-        button1 = (Button) findViewById(R.id.button1);
-        button1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                prefix1();
-            }
-        });
-
-        button2 = (Button) findViewById(R.id.button2);
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                prefix2();
-            }
-        });
 
         output3 = (TextView) findViewById(R.id.output3);
         button3 = (Button) findViewById(R.id.button3);
@@ -143,52 +72,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        unbindService(con1);
-        con1.onServiceDisconnected(null);
-        unbindService(con2);
-        con2.onServiceDisconnected(null);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        Intent i = new Intent(this, LocalService1.class);
-        bindService(i, con1, Context.BIND_AUTO_CREATE);
-
-        i = new Intent(this, LocalService2.class);
-        bindService(i, con2, Context.BIND_AUTO_CREATE);
-    }
-
-    void prefix1() {
-        if (svc1 == null) {
-            return;
-        }
-
-        output.setText(String.valueOf(svc1.prefix(input.getText().toString())));
-    }
-
-    void prefix2() {
-        if (svc2 == null) {
-            return;
-        }
-
-        output.setText(String.valueOf(svc2.prefix(input.getText().toString())));
-    }
-
     void eatACookie() {
-        Contract.eatACookie(this, input.getText().toString());
+        AsyncCookieService.eatACookie(this, input.getText().toString());
         output3.setText("I probably ate it");
     }
 
     void eatACookieNoisily() {
-        Contract.eatACookieNoisily(this, input.getText().toString(), responseMessenger);
-    }
-
-    void cookieEatenNoisily(String resp) {
-        output4.setText(resp);
+        AsyncCookieService.eatACookieNoisily(this, input.getText().toString());
+        output4.setText("I probably ate it noisily");
     }
 }

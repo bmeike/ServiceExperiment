@@ -34,7 +34,7 @@ import net.callmeike.android.services.common.Contract;
  * @author <a href="mailto:blake.meike@gmail.com">G. Blake Meike</a>
  * @version $Revision: $
  */
-public class AsyncCookieService extends Service {
+public class CookieService extends Service {
     private static final String TAG = "ASYNC_COOKIE";
 
     public static final String ACTION_EAT = "CookieService.ACTION.EAT";
@@ -43,7 +43,7 @@ public class AsyncCookieService extends Service {
 
 
     public static void eatACookie(@NonNull Context ctxt, @NonNull String cookie) {
-        Intent intent = new Intent(ctxt, AsyncCookieService.class);
+        Intent intent = new Intent(ctxt, CookieService.class);
         intent.setAction(ACTION_EAT);
         intent.putExtra(PARAM_COOKIE, cookie);
         ctxt.startService(intent);
@@ -52,19 +52,15 @@ public class AsyncCookieService extends Service {
     public static void eatACookieNoisily(
         @NonNull Context ctxt,
         @NonNull String cookie) {
-        Intent intent = new Intent(ctxt, AsyncCookieService.class);
+        Intent intent = new Intent(ctxt, CookieService.class);
         intent.setAction(ACTION_EAT_NOISILY);
         intent.putExtra(PARAM_COOKIE, cookie);
         ctxt.startService(intent);
     }
 
-    private int running;
-    private Handler mainThreadHandler;
-
     @Override
     public void onCreate() {
         super.onCreate();
-        mainThreadHandler = new Handler();
     }
 
     @Nullable
@@ -75,30 +71,6 @@ public class AsyncCookieService extends Service {
 
     @UiThread
     public int onStartCommand(Intent intent, int flags, int startId) {
-        new AsyncTask<Intent, Void, Void>() {
-            @WorkerThread
-            protected Void doInBackground(Intent... intent) {
-                try {
-                    running++;
-                    processIntent(intent[0]);
-                }
-                finally {
-                    if (0 >= --running) {
-                        mainThreadHandler.post(
-                            new Runnable() {
-                                @Override
-                                public void run() { stopSelf(); }
-                            });
-                    }
-                }
-                return null;
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, intent);
-
-        return Service.START_NOT_STICKY;
-    }
-
-    void processIntent(Intent intent) {
         String action = intent.getAction();
         Log.d(TAG, "action: " + action);
         switch (action) {
@@ -113,26 +85,17 @@ public class AsyncCookieService extends Service {
             default:
                 Log.w(TAG, "unexpected action: " + action);
         }
+
+        return START_NOT_STICKY;
     }
 
     @UiThread
     private void doEatACookie(String cookie) {
         Log.i(TAG, "munch: " + cookie);
-        pause(60 * 1000);
     }
 
     @UiThread
     private void doEatACookieNoisily(String cookie) {
         Log.i(TAG, "MUNCH MUNCH MUNCH: " + cookie);
-        pause(60 * 1000);
-    }
-
-    private void pause(long ms) {
-        try {
-            Thread.sleep(ms);
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }

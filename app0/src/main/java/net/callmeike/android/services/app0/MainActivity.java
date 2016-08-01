@@ -15,24 +15,12 @@
 */
 package net.callmeike.android.services.app0;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import java.lang.ref.WeakReference;
-
-import net.callmeike.android.services.common.Contract;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -73,12 +61,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void eatACookie() {
-        AsyncCookieService.eatACookie(this, input.getText().toString());
+        CookieService.eatACookie(this, input.getText().toString());
         output3.setText("I probably ate it");
     }
 
     void eatACookieNoisily() {
-        AsyncCookieService.eatACookieNoisily(this, input.getText().toString());
+        CookieService.eatACookieNoisily(this, input.getText().toString());
         output4.setText("I probably ate it noisily");
     }
 }

@@ -32,20 +32,20 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     private static final String TAG = "APP0";
 
     private Button button1;
-    private Button button2;
     private EditText input;
     private TextView output;
     private LocalService1 svc1;
-    private LocalService2 svc2;
 
     @Override
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-
+        svc1 = (((LocalService1.ServiceHolder) iBinder).getService());
+        button1.setEnabled(true);
     }
 
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
-
+        svc1 = null;
+        button1.setEnabled(false);
     }
 
     @Override
@@ -61,15 +61,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                prefix1();
-            }
-        });
-
-        button2 = (Button) findViewById(R.id.button2);
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                prefix2();
+                prefix();
             }
         });
     }
@@ -87,24 +79,13 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
         Intent i = new Intent(this, LocalService1.class);
         bindService(i, this, Context.BIND_AUTO_CREATE);
-
-        i = new Intent(this, LocalService2.class);
-        bindService(i, this, Context.BIND_AUTO_CREATE);
     }
 
-    void prefix1() {
+    void prefix() {
         if (svc1 == null) {
             return;
         }
 
         output.setText(String.valueOf(svc1.prefix(input.getText().toString())));
-    }
-
-    void prefix2() {
-        if (svc2 == null) {
-            return;
-        }
-
-        output.setText(String.valueOf(svc2.prefix(input.getText().toString())));
     }
 }

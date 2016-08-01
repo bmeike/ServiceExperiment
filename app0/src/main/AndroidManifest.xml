@@ -23,11 +23,6 @@
                 android:exported="false">
         </service>
 
-        <service
-                android:name=".LocalService2"
-                android:enabled="true"
-                android:exported="false">
-        </service>
     </application>
 
 </manifest>

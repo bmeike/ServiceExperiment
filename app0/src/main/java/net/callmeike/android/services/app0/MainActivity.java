@@ -20,19 +20,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import java.lang.ref.WeakReference;
-
-import net.callmeike.android.services.common.Contract;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -40,35 +33,10 @@ public class MainActivity extends AppCompatActivity {
 
     private Button button1;
     private Button button2;
-    private Button button3;
-    private Button button4;
     private EditText input;
     private TextView output;
-    private TextView output3;
-    private TextView output4;
     private LocalService1 svc1;
     private LocalService2 svc2;
-    private Messenger responseMessenger;
-
-    private class ResponseHandler extends Handler {
-        private final WeakReference<MainActivity> activity;
-        public ResponseHandler(MainActivity activity) {
-            this.activity = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case Contract.WHAT_GOBBLED:
-                    MainActivity act = activity.get();
-                    if (act != null) {
-                        Bundle resp = (Bundle) msg.obj;
-                        act.cookieEatenNoisily(resp.getString(Contract.PARAM_RESP));
-                    }
-                    break;
-            }
-        }
-    }
 
     private ServiceConnection con1 = new ServiceConnection() {
         @Override
@@ -76,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
             svc1 = (((LocalService1.ServiceHolder) binder).getService());
             button1.setEnabled(true);
         }
+
         @Override
         public void onServiceDisconnected(ComponentName name) {
             svc1 = null;
@@ -89,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
             svc2 = (((LocalService2.ServiceHolder) binder).getService());
             button2.setEnabled(true);
         }
+
         @Override
         public void onServiceDisconnected(ComponentName name) {
             svc2 = null;
@@ -100,8 +70,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        responseMessenger = new Messenger(new ResponseHandler(this));
 
         setContentView(R.layout.activity_main);
 
@@ -121,24 +89,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 prefix2();
-            }
-        });
-
-        output3 = (TextView) findViewById(R.id.output3);
-        button3 = (Button) findViewById(R.id.button3);
-        button3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                eatACookie();
-            }
-        });
-
-        output4 = (TextView) findViewById(R.id.output4);
-        button4 = (Button) findViewById(R.id.button4);
-        button4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                eatACookieNoisily();
             }
         });
     }
@@ -177,18 +127,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
         output.setText(String.valueOf(svc2.prefix(input.getText().toString())));
-    }
-
-    void eatACookie() {
-        Contract.eatACookie(this, input.getText().toString());
-        output3.setText("I probably ate it");
-    }
-
-    void eatACookieNoisily() {
-        Contract.eatACookieNoisily(this, input.getText().toString(), responseMessenger);
-    }
-
-    void cookieEatenNoisily(String resp) {
-        output4.setText(resp);
     }
 }

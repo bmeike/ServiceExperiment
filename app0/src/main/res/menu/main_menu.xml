@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".PrefixActivity">
+
+    <item
+        android:id="@+id/action_cookies"
+        android:title="@string/action_cookie"
+        android:orderInCategory="100"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_prefix"
+        android:title="@string/action_prefix"
+        android:orderInCategory="100"
+        app:showAsAction="never"/>
+
+</menu>

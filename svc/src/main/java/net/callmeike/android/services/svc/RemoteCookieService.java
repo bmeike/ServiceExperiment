@@ -33,8 +33,8 @@ import net.callmeike.android.services.common.Contract;
  * @author <a href="mailto:blake.meike@gmail.com">G. Blake Meike</a>
  * @version $Revision: $
  */
-public class CookieService extends Service {
-    private static final String TAG = "COOKIE";
+public class RemoteCookieService extends Service {
+    private static final String TAG = "REMCOOKIESVC";
 
     @Nullable
     @Override

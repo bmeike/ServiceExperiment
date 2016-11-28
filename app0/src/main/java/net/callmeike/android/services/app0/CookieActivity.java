@@ -13,31 +13,45 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package net.callmeike.android.services.app2;
+package net.callmeike.android.services.app0;
 
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.os.RemoteException;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import net.callmeike.android.services.common.Contract;
-import net.callmeike.android.services.common.SlowRandom;
 
 
-public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "APP2";
+public class CookieActivity extends BaseActivity {
+    private static final String TAG = "COOKIEACT";
+
+    private Button button;
+    private EditText input;
+    private TextView output;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
+        setContentView(R.layout.activity_cookie);
+
+        input = (EditText) findViewById(R.id.input);
+        output = (TextView) findViewById(R.id.output);
+
+        button = (Button) findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                eatACookie();
+            }
+        });
+    }
+
+    void eatACookie() {
+        String cookie = input.getText().toString();
+        CookieService.eatACookie(this, cookie);
+        output.setText("I probably ate it a " + cookie);
     }
 }

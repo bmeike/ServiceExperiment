@@ -13,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package net.callmeike.android.util;
+package net.callmeike.android.services.common.util;
 
 import android.os.Build;
 import android.os.Handler;
@@ -34,11 +34,13 @@ import java.io.IOException;
 public class ProcessStats {
     private static final String TAG = "ProcessStats";
 
+    private final String tag;
     private final String oomAdj;
     private Handler periodicLogger;
 
 
-    public ProcessStats() {
+    public ProcessStats(String tag) {
+        this.tag = tag;
         oomAdj = (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB)
             ? "/oom_adj"
             : "/oom_score_adj";
@@ -71,19 +73,21 @@ public class ProcessStats {
         Log.d(tag, "(" + pid + ", " + thread + ") @" + priority + ": " + msg);
     }
 
-    public void startPeriodicLogger(Looper looper, final int secs, final String tag, final String text) {
-        periodicLogger = new Handler(looper) {
+    public void startPeriodicLogger(final int secs) {
+        periodicLogger = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message msg) {
                 if (periodicLogger == null) { return; }
-                log(tag, text);
+                log(tag, "periodic");
                 periodicLogger.sendEmptyMessageDelayed(0, secs * 1000);
             }
         };
+        Log.d(tag, "Starting stats logger");
         periodicLogger.sendEmptyMessageDelayed(0, 1000);
     }
 
     public void stopPeriodicLogger() {
+        Log.d(tag, "Stats logger stopped");
         periodicLogger = null;
     }
 }

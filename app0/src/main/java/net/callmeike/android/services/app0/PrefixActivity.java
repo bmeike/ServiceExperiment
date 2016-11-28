@@ -13,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package net.callmeike.android.services.app1;
+package net.callmeike.android.services.app0;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -21,49 +21,46 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.RemoteException;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
-import net.callmeike.android.services.common.Contract;
-import net.callmeike.android.services.common.SlowRandom;
 
+public class PrefixActivity extends BaseActivity implements ServiceConnection {
+    private static final String TAG = "APP0";
 
-public class MainActivity extends AppCompatActivity implements ServiceConnection {
-    private static final String TAG = "APP1";
-
-    private Button button;
-    private TextView number;
-    private SlowRandom randomNumberGenerator;
+    private Button button1;
+    private EditText input;
+    private TextView output;
+    private LocalService1 svc1;
 
     @Override
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-        button.setEnabled(true);
-        randomNumberGenerator = SlowRandom.Stub.asInterface(iBinder);
+        svc1 = ((LocalService1.ServiceHolder) iBinder).getService();
+        button1.setEnabled(true);
     }
 
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
-        randomNumberGenerator = null;
-        button.setEnabled(false);
+        svc1 = null;
+        button1.setEnabled(false);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_prefix);
 
-        number = (TextView) findViewById(R.id.number);
+        input = (EditText) findViewById(R.id.input);
+        output = (TextView) findViewById(R.id.output);
 
-        button = (Button) findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
+        button1 = (Button) findViewById(R.id.button1);
+        button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getRandomNumber();
+                prefix1();
             }
         });
     }
@@ -79,20 +76,15 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     protected void onStart() {
         super.onStart();
 
-        Intent svc = new Intent();
-        svc.setComponent(new ComponentName(Contract.SLOW_SERVICE_PACKAGE, Contract.SLOW_SERVICE_CLASS));
-        bindService(svc, this, Context.BIND_AUTO_CREATE);
+        Intent i = new Intent(this, LocalService1.class);
+        bindService(i, this, Context.BIND_AUTO_CREATE);
     }
 
-    void getRandomNumber() {
-        if (randomNumberGenerator == null) {
+    void prefix1() {
+        if (svc1 == null) {
             return;
         }
 
-        try {
-            number.setText(String.valueOf(randomNumberGenerator.getRandomNumber()));
-        } catch (RemoteException e) {
-            Log.e(TAG, "remote exception: ", e);
-        }
+        output.setText(String.valueOf(svc1.prefix(input.getText().toString())));
     }
 }

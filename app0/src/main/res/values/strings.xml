@@ -1,8 +1,16 @@
 <resources>
     <string name="app_name">APP 0</string>
-    <string name="empty"/>
-    <string name="button1">Button 1</string>
-    <string name="button2">Button 2</string>
-    <string name="button3">Button 3</string>
-    <string name="button4">Button 4</string>
+
+    <string name="action_cookie">Cookies</string>
+    <string name="action_prefix">Prefix</string>
+
+    <string name="cookie">gimme cookie</string>
+    <string name="experiment">Service Experiment</string>
+    <string name="eat">Eat</string>
+
+    <string name="empty">Nothing yet...</string>
+    <string name="text">text...</string>
+    <string name="prefix1">Prefix 1</string>
+    <string name="prefix2">Prefix 2</string>
+
 </resources>

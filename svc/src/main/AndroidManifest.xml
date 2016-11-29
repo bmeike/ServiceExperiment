@@ -2,6 +2,7 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.callmeike.android.services.svc"
+    android:sharedUserId="net.callmeike.android.services.common"
     >
 
     <application
@@ -29,6 +30,7 @@
             android:name=".SlowService"
             android:enabled="true"
             android:exported="true"
+            android:process="services.common"
             />
     </application>
 

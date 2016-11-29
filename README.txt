@@ -22,15 +22,18 @@ sure that you can compile and run them all (they may crash),
 Gradle is a pig.  You will not be happy if you are sitting in the
 back of the room, trying to download the Guava library.
 
-  I recommend that you have either Java 1.7.0_79 or 1.8.0_101
-installed. The project was built with the current stable Android
-Studio 2.2.2, and uses Gradle 2.14.1.  It uses BuildTools 24.0.3 and
-Android SDK 24.  I've run it on a 5X emulator, running Nougat.
-Other configurations may work but please test to confirm.  In
-particular, the code does really horrible things to the UI thread
-and may not work at all on a real device.
+  I recommend that you have Java 1.8.0_131 installed.  Any
+Java 8 should be sufficient. The project was built with the
+current Canary AndroidStudio, 3.0. and uses Gradle
+4.1-milestone-1.  It uses grade plugin 3.0.0-alpha5
+BuildTools 26.0.0 and Android SDK 26.  I've run it on a
+Pixel emulator, running O.
 
-  I will be giving away several copies of my new book, "Android
+  Other configurations may work but please test to confirm. 
+In particular, some of the code does really horrible things
+to the UI thread and may not work at all on a real device.
+
+  I hope to give away several copies of my new book, "Android
 Concurrency" for feats of coding skill, during the workshop.  Come
 curious and ready to code.
 

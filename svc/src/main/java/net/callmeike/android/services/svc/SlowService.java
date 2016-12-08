@@ -59,7 +59,6 @@ public class SlowService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
         if (null == service) {
             service = new SlowServiceImpl();
         }
